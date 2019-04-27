@@ -1,0 +1,22 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+**/.git*
+target/*
+.idea/*
+*.iml
+*.DS_Store
+**/target/
+/bin/
+
+# Eclipse Project Setting #
+.classpath
+.project
+.settings/*
+**/.classpath
+**/.project
+**/.settings/*
+**/.allure/*
