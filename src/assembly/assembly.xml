@@ -1,0 +1,20 @@
+<assembly>
+	<id>bundle</id>
+	<formats>
+		<format>tar.gz</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>src/pkg</directory>
+			<outputDirectory>.</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>target</directory>
+			<outputDirectory>deployer</outputDirectory>
+			<includes>
+				<include>script-deployer.jar</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<springProperty scope="context"
+		name="app.log.level" source="app.log.level" />
+	<springProperty scope="context"
+		name="app.scripts.deployer.home" source="app.scripts.deployer.home" />
+	<springProperty scope="context"
+		name="app.logging.pattern" source="app.logging.pattern" />
+
+	<property name="APP_LOG_HOME"
+		value="${app.scripts.deployer.home}/logs" />
+	<timestamp key="systime" datePattern="yyyy-MM-dd'_'HH-mm-ss" />
+
+	<appender name="APP-LOG"
+		class="ch.qos.logback.core.FileAppender">
+		<file>${APP_LOG_HOME}/deployer.${systime}.log</file>
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				${app.logging.pattern}
+			</Pattern>
+		</encoder>
+
+	</appender>
+
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				${app.logging.pattern}
+			</Pattern>
+		</layout>
+	</appender>
+
+
+	<root level="${app.log.level}">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="APP-LOG" />
+	</root>
+
+</configuration>
