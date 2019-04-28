@@ -32,9 +32,9 @@ public class DBSpooler {
 		Iterable<ScriptHistory> records = scriptHistoryRepository.findAll();
 		File csvOutputFile = new File(spoolFileName);
 		try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
-			pw.println("path,type,sequence,checksum,create date,update date");
+			pw.println("path,type,sequence,version,checksum,create date,update date");
 			for (ScriptHistory r : records) {
-				pw.println(String.format("%s,%s,%d,%s,%s,%s", r.getPath(), r.getType(), r.getSequence(),
+				pw.println(String.format("%s,%s,%d,%d,%s,%s,%s", r.getPath(), r.getType(), r.getSequence(), r.getVersion(),
 						r.getChecksum(), r.getCreateDate(), r.getUpdateDate()));
 			}
 		} catch (FileNotFoundException ex) {
