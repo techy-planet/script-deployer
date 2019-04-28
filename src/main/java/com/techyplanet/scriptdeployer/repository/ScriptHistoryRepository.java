@@ -6,7 +6,7 @@ import com.techyplanet.scriptdeployer.entity.ScriptHistory;
 
 public interface ScriptHistoryRepository extends CrudRepository<ScriptHistory, Long> {
 
-	ScriptHistory findBySequenceAndType(Integer sequence, String type);
+	ScriptHistory findBySequenceAndType(Long sequence, String type);
 
 	ScriptHistory findByPath(String path);
 }

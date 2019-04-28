@@ -43,14 +43,14 @@ public class CommonUtils {
 
 	}
 
-	public static Integer getFileSequence(String filePattern, String fileName) {
-		Integer fileSequence = 0;
+	public static Long getFileSequence(String filePattern, String fileName) {
+		Long fileSequence = 0L;
 		Pattern p = Pattern.compile(filePattern);
 		Matcher m = p.matcher(fileName);
 		if (m.find()) {
-			fileSequence = Integer.parseInt(m.group(1));
+			fileSequence = Long.parseLong(m.group(1));
 		} else {
-			fileSequence = 0;
+			fileSequence = 0L;
 		}
 		return fileSequence;
 	}

@@ -62,7 +62,7 @@ public class FileProcessorService {
 
 			String relativePath = scriptsDir.toURI().relativize(oneTimeFile.toURI()).getPath();
 			String checksum = CommonUtils.generateFileChecksum(oneTimeFile.toPath());
-			Integer sequence = CommonUtils.getFileSequence(oneTimeFileRegexPattern, fileName);
+			Long sequence = CommonUtils.getFileSequence(oneTimeFileRegexPattern, fileName);
 
 			Date currentDate = new Date();
 			ScriptHistory sameSequenceEntry = scriptHistoryRepository.findBySequenceAndType(sequence, "SEQ");
@@ -70,7 +70,7 @@ public class FileProcessorService {
 				LOGGER.info("<-- first run --> {}", relativePath);
 				executeScript(oneTimeFilePath);
 				scriptHistoryRepository
-						.save(new ScriptHistory(relativePath, "SEQ", sequence, checksum, currentDate, currentDate));
+						.save(new ScriptHistory(relativePath, "SEQ", sequence, 1L, checksum, currentDate, currentDate));
 			} else if (!relativePath.equals(sameSequenceEntry.getPath())) {
 				throw new RuntimeException(String.format(
 						"[%s] file was executed in previous runs with same sequence number, [%s] can't use same sequence number.",
@@ -78,6 +78,7 @@ public class FileProcessorService {
 			} else if (!checksum.equals(sameSequenceEntry.getChecksum())) {
 				if ("reset-hash".equals(appSettings.getFileModifyError())) {
 					sameSequenceEntry.setChecksum(checksum);
+					sameSequenceEntry.setVersion(sameSequenceEntry.getVersion() + 1);
 					sameSequenceEntry.setUpdateDate(currentDate);
 					LOGGER.info("<-- reset-hash --> {}", relativePath);
 					scriptHistoryRepository.save(sameSequenceEntry);
@@ -115,7 +116,7 @@ public class FileProcessorService {
 
 			String relativePath = scriptsDir.toURI().relativize(repeatableFile.toURI()).getPath();
 			String checksum = CommonUtils.generateFileChecksum(repeatableFile.toPath());
-			Integer sequence = CommonUtils.getFileSequence(repeatableFileRegexPattern, fileName);
+			Long sequence = CommonUtils.getFileSequence(repeatableFileRegexPattern, fileName);
 
 			Date currentDate = new Date();
 			ScriptHistory previousEntry = scriptHistoryRepository.findByPath(relativePath);
@@ -123,9 +124,10 @@ public class FileProcessorService {
 				LOGGER.info("<-- first run --> {}", relativePath);
 				executeScript(repeatableFilePath);
 				scriptHistoryRepository
-						.save(new ScriptHistory(relativePath, "REP", sequence, checksum, currentDate, currentDate));
+						.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum, currentDate, currentDate));
 			} else if (!checksum.equals(previousEntry.getChecksum())) {
 				previousEntry.setChecksum(checksum);
+				previousEntry.setVersion(previousEntry.getVersion() + 1);
 				previousEntry.setUpdateDate(currentDate);
 				LOGGER.info("<-- re-run --> {}", relativePath);
 				executeScript(repeatableFilePath);
@@ -159,7 +161,7 @@ public class FileProcessorService {
 
 			String relativePath = scriptsDir.toURI().relativize(allTimeFile.toURI()).getPath();
 			String checksum = CommonUtils.generateFileChecksum(allTimeFile.toPath());
-			Integer sequence = CommonUtils.getFileSequence(allTimeFileRegexPattern, fileName);
+			Long sequence = CommonUtils.getFileSequence(allTimeFileRegexPattern, fileName);
 
 			Date currentDate = new Date();
 			ScriptHistory previousEntry = scriptHistoryRepository.findByPath(relativePath);
@@ -167,13 +169,16 @@ public class FileProcessorService {
 				LOGGER.info("<-- first run --> {}", relativePath);
 				executeScript(allTimeFilePath);
 				scriptHistoryRepository
-						.save(new ScriptHistory(relativePath, "REP", sequence, checksum, currentDate, currentDate));
+						.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum, currentDate, currentDate));
 			} else {
-				previousEntry.setChecksum(checksum);
-				previousEntry.setUpdateDate(currentDate);
 				LOGGER.info("<-- re-run --> {}", relativePath);
 				executeScript(allTimeFilePath);
-				scriptHistoryRepository.save(previousEntry);
+				if (!checksum.equals(previousEntry.getChecksum())) {
+					previousEntry.setChecksum(checksum);
+					previousEntry.setVersion(previousEntry.getVersion() + 1);
+					previousEntry.setUpdateDate(currentDate);
+					scriptHistoryRepository.save(previousEntry);
+				}
 			}
 
 		}
