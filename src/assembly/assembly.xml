@@ -16,5 +16,13 @@
 				<include>script-deployer.jar</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<directory>.</directory>
+			<outputDirectory>.</outputDirectory>
+			<includes>
+				<include>LICENSE</include>
+				<include>README.md</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 </assembly>
