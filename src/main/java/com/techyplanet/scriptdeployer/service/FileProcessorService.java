@@ -142,7 +142,7 @@ public class FileProcessorService {
 
 			String relativePath = scriptsDir.toURI().relativize(repeatableFile.toURI()).getPath();
 			String checksum = CommonUtils.generateFileChecksum(repeatableFile.toPath());
-			Long sequence = CommonUtils.getFileSequence(repeatableFileRegexPattern, fileName);
+			Long sequence = CommonUtils.getFileSequence(repeatableFileRegexPattern, fileName, seqNumApplicable);
 
 			Date currentDate = new Date();
 			ScriptHistory previousEntry = scriptHistoryRepository.findByPath(relativePath);
@@ -202,7 +202,7 @@ public class FileProcessorService {
 
 			String relativePath = scriptsDir.toURI().relativize(allTimeFile.toURI()).getPath();
 			String checksum = CommonUtils.generateFileChecksum(allTimeFile.toPath());
-			Long sequence = CommonUtils.getFileSequence(allTimeFileRegexPattern, fileName);
+			Long sequence = CommonUtils.getFileSequence(allTimeFileRegexPattern, fileName, seqNumApplicable);
 
 			Date currentDate = new Date();
 			ScriptHistory previousEntry = scriptHistoryRepository.findByPath(relativePath);
