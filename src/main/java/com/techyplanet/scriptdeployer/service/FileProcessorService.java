@@ -43,11 +43,23 @@ public class FileProcessorService {
 	public void processOneTimeFiles(File scriptsDir) {
 
 		LOGGER.info("=========== checking one time scripts ===========");
-		String oneTimeFilePattern = appSettings.getOneTimeFilePattern();
-		if (StringUtils.isBlank(oneTimeFilePattern)) {
+		String oneTimeFilePatternProp = appSettings.getOneTimeFilePattern();
+		if (StringUtils.isBlank(oneTimeFilePatternProp)) {
 			LOGGER.info(
 					"<-- Skipping --> No pattern defined for sequential scripts [app.scripts.oneTime.file.pattern], hence skipping one time scripts deployment.");
 			return;
+		}
+
+		String[] oneTimeFilePatterns = oneTimeFilePatternProp.split(",");
+		for (String oneTimeFilePattern : oneTimeFilePatterns) {
+			processOneTimeFIle(scriptsDir, oneTimeFilePattern);
+		}
+	}
+
+	private void processOneTimeFIle(File scriptsDir, String oneTimeFilePattern) {
+		if (!oneTimeFilePattern.contains("<seq_num>")) {
+			throw new RuntimeException(String
+					.format("'<seq_num>' must be defined as part of one time file pattern [%s]", oneTimeFilePattern));
 		}
 		String oneTimeFileRegexPattern = oneTimeFilePattern.replace("<seq_num>", "(\\d+)");
 		IOFileFilter oneTimeFilesFilter = new RegexFileFilter(oneTimeFileRegexPattern);
@@ -97,18 +109,32 @@ public class FileProcessorService {
 	public void processRepeatableFiles(File scriptsDir) {
 
 		LOGGER.info("=========== checking repeatable scripts =========");
-		String repeatableFilePattern = appSettings.getRepeatableFilePattern();
-		if (StringUtils.isBlank(repeatableFilePattern)) {
+		String repeatableFilePatternProp = appSettings.getRepeatableFilePattern();
+		if (StringUtils.isBlank(repeatableFilePatternProp)) {
 			LOGGER.info(
 					"<-- Skipping --> No pattern defined for rerunnable scripts [app.scripts.repeatable.file.pattern], hence skipping re-runnable scripts deployment.");
 			return;
+		}
+
+		String[] repeatableFilePatterns = repeatableFilePatternProp.split(",");
+		for (String repeatableFilePattern : repeatableFilePatterns) {
+			processRepeatableFile(scriptsDir, repeatableFilePattern);
+		}
+	}
+
+	private void processRepeatableFile(File scriptsDir, String repeatableFilePattern) {
+
+		boolean seqNumApplicable = false;
+		if (repeatableFilePattern.contains("<seq_num>")) {
+			seqNumApplicable = true;
 		}
 		String repeatableFileRegexPattern = repeatableFilePattern.replace("<seq_num>", "(\\d+)");
 		IOFileFilter repeatableFilesFilter = new RegexFileFilter(repeatableFileRegexPattern);
 		List<File> repeatableFiles = (List<File>) FileUtils.listFiles(scriptsDir, repeatableFilesFilter,
 				TrueFileFilter.INSTANCE);
 
-		Collections.sort(repeatableFiles, CommonUtils.scriptPrioritySorter(repeatableFileRegexPattern, true));
+		Collections.sort(repeatableFiles,
+				CommonUtils.scriptPrioritySorter(repeatableFileRegexPattern, seqNumApplicable, true));
 
 		for (File repeatableFile : repeatableFiles) {
 			String repeatableFilePath = repeatableFile.getAbsolutePath();
@@ -142,18 +168,33 @@ public class FileProcessorService {
 	public void processRunAllTimeFiles(File scriptsDir) {
 
 		LOGGER.info("=========== checking scripts for each run =======");
-		String allTimeFilePattern = appSettings.getAllTimeFilePattern();
-		if (StringUtils.isBlank(allTimeFilePattern)) {
+		String allTimeFilePatternProp = appSettings.getAllTimeFilePattern();
+		if (StringUtils.isBlank(allTimeFilePatternProp)) {
 			LOGGER.info(
 					"<-- Skipping --> No pattern defined for everytime scripts [app.scripts.run.always.file.pattern], hence skipping everytime scripts deployment.");
 			return;
 		}
+
+		String[] allTimeFilePatterns = allTimeFilePatternProp.split(",");
+		for (String allTimeFilePattern : allTimeFilePatterns) {
+			processRunAllTimeFile(scriptsDir, allTimeFilePattern);
+		}
+	}
+
+	private void processRunAllTimeFile(File scriptsDir, String allTimeFilePattern) {
+
+		boolean seqNumApplicable = false;
+		if (allTimeFilePattern.contains("<seq_num>")) {
+			seqNumApplicable = true;
+		}
+
 		String allTimeFileRegexPattern = allTimeFilePattern.replace("<seq_num>", "(\\d+)");
 		IOFileFilter allTimeFilesFilter = new RegexFileFilter(allTimeFileRegexPattern);
 		List<File> allTimeFiles = (List<File>) FileUtils.listFiles(scriptsDir, allTimeFilesFilter,
 				TrueFileFilter.INSTANCE);
 
-		Collections.sort(allTimeFiles, CommonUtils.scriptPrioritySorter(allTimeFileRegexPattern, true));
+		Collections.sort(allTimeFiles,
+				CommonUtils.scriptPrioritySorter(allTimeFileRegexPattern, seqNumApplicable, true));
 
 		for (File allTimeFile : allTimeFiles) {
 			String allTimeFilePath = allTimeFile.getAbsolutePath();

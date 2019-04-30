@@ -15,6 +15,11 @@ import javax.xml.bind.DatatypeConverter;
 public class CommonUtils {
 
 	public static Comparator<File> scriptPrioritySorter(String fileRegexPattern, boolean sameSequenceAllowed) {
+		return scriptPrioritySorter(fileRegexPattern, true, sameSequenceAllowed);
+	}
+
+	public static Comparator<File> scriptPrioritySorter(String fileRegexPattern, boolean seqNumApplicable,
+			boolean sameSequenceAllowed) {
 
 		return new Comparator<File>() {
 
@@ -24,8 +29,8 @@ public class CommonUtils {
 				String file1Name = file1.getName();
 				String file2Name = file2.getName();
 
-				int compareVal = getFileSequence(fileRegexPattern, file1Name)
-						.compareTo(getFileSequence(fileRegexPattern, file2Name));
+				int compareVal = getFileSequence(fileRegexPattern, file1Name, seqNumApplicable)
+						.compareTo(getFileSequence(fileRegexPattern, file2Name, seqNumApplicable));
 				if (compareVal == 0 && !sameSequenceAllowed) {
 					throw new RuntimeException(
 							String.format("No two scripts can have same sequence number allocated --> [%s] && [%s]",
@@ -40,11 +45,18 @@ public class CommonUtils {
 				return compareVal;
 			}
 		};
-
 	}
 
-	public static Long getFileSequence(String filePattern, String fileName) {
+	public static Long getFileSequence(String oneTimeFileRegexPattern, String fileName) {
+		return getFileSequence(oneTimeFileRegexPattern, fileName, true);
+	}
+
+	public static Long getFileSequence(String filePattern, String fileName, boolean seqNumApplicable) {
+
 		Long fileSequence = 0L;
+		if (!seqNumApplicable)
+			return fileSequence;
+
 		Pattern p = Pattern.compile(filePattern);
 		Matcher m = p.matcher(fileName);
 		if (m.find()) {
