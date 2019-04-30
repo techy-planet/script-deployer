@@ -39,6 +39,9 @@ public class AppSettings {
 	@Value("${app.scripts.deployer.home}/logs")
 	private String logDir;
 
+	@Value("${app.scripts.db.metadata.spool}")
+	private boolean scriptMetadataSpoolEnabled;
+
 	public boolean isTraceRequired() {
 		return traceRequired;
 	}
@@ -81,6 +84,10 @@ public class AppSettings {
 
 	public String getLogDir() {
 		return logDir;
+	}
+
+	public boolean isScriptMetadataSpoolEnabled() {
+		return scriptMetadataSpoolEnabled;
 	}
 
 }

@@ -26,6 +26,10 @@ public class DBSpooler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DBSpooler.class);
 
 	public void spoolDB(String filePrefix) {
+		if (!appSettings.isScriptMetadataSpoolEnabled()) {
+			LOGGER.info(" ----- Spooling DB is disabled ----- {}");
+			return;
+		}
 		String spoolFileName = appSettings.getLogDir() + "/" + filePrefix + "db_dump_"
 				+ new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".csv";
 		LOGGER.info(" ----- Spooling DB table in a CSV file ----- {}", spoolFileName);
@@ -34,8 +38,8 @@ public class DBSpooler {
 		try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
 			pw.println("path,type,sequence,version,checksum,create date,update date");
 			for (ScriptHistory r : records) {
-				pw.println(String.format("%s,%s,%d,%d,%s,%s,%s", r.getPath(), r.getType(), r.getSequence(), r.getVersion(),
-						r.getChecksum(), r.getCreateDate(), r.getUpdateDate()));
+				pw.println(String.format("%s,%s,%d,%d,%s,%s,%s", r.getPath(), r.getType(), r.getSequence(),
+						r.getVersion(), r.getChecksum(), r.getCreateDate(), r.getUpdateDate()));
 			}
 		} catch (FileNotFoundException ex) {
 			LOGGER.error("Failed to write DB Dump in csv file.");
