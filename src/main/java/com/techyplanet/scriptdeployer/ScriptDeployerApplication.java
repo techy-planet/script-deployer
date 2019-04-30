@@ -28,7 +28,7 @@ public class ScriptDeployerApplication implements CommandLineRunner {
 
 	@Autowired
 	private VariablesValidator variablesValidator;
-	
+
 	@Autowired
 	private DBSpooler dbSpooler;
 
@@ -56,6 +56,7 @@ public class ScriptDeployerApplication implements CommandLineRunner {
 			} else {
 				LOGGER.error(ex.getMessage());
 			}
+			System.exit(1000);
 		}
 	}
 

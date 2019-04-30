@@ -7,6 +7,9 @@
 		name="app.scripts.deployer.home" source="app.scripts.deployer.home" />
 	<springProperty scope="context"
 		name="app.logging.pattern" source="app.logging.pattern" />
+	<springProperty scope="context"
+		name="app.log.class.pattern" source="app.log.class.pattern" />
+
 
 	<property name="APP_LOG_HOME"
 		value="${app.scripts.deployer.home}/logs" />
@@ -33,10 +36,9 @@
 		</layout>
 	</appender>
 
-
-	<root level="${app.log.level}">
+	<logger name="${app.log.class.pattern}" level="${app.log.level}">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="APP-LOG" />
-	</root>
+	</logger>
 
 </configuration>
