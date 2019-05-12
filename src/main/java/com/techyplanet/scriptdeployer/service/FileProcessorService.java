@@ -61,6 +61,9 @@ public class FileProcessorService {
 			throw new RuntimeException(String
 					.format("'<seq_num>' must be defined as part of one time file pattern [%s]", oneTimeFilePattern));
 		}
+
+		LOGGER.info("<-- Pattern Lookup  --> {}", oneTimeFilePattern);
+
 		String oneTimeFileRegexPattern = oneTimeFilePattern.replace("<seq_num>", "(\\d+)");
 		IOFileFilter oneTimeFilesFilter = new RegexFileFilter(oneTimeFileRegexPattern);
 		List<File> oneTimeFiles = (List<File>) FileUtils.listFiles(scriptsDir, oneTimeFilesFilter,
@@ -128,6 +131,9 @@ public class FileProcessorService {
 		if (repeatableFilePattern.contains("<seq_num>")) {
 			seqNumApplicable = true;
 		}
+
+		LOGGER.info("<-- Pattern Lookup  --> {}", repeatableFilePattern);
+
 		String repeatableFileRegexPattern = repeatableFilePattern.replace("<seq_num>", "(\\d+)");
 		IOFileFilter repeatableFilesFilter = new RegexFileFilter(repeatableFileRegexPattern);
 		List<File> repeatableFiles = (List<File>) FileUtils.listFiles(scriptsDir, repeatableFilesFilter,
@@ -187,6 +193,8 @@ public class FileProcessorService {
 		if (allTimeFilePattern.contains("<seq_num>")) {
 			seqNumApplicable = true;
 		}
+
+		LOGGER.info("<-- Pattern Lookup  --> {}", allTimeFilePattern);
 
 		String allTimeFileRegexPattern = allTimeFilePattern.replace("<seq_num>", "(\\d+)");
 		IOFileFilter allTimeFilesFilter = new RegexFileFilter(allTimeFileRegexPattern);

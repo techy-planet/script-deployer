@@ -25,7 +25,9 @@ public class CommandUtils {
 		try {
 			checkOSAndExecute(command, streamHandler);
 		} catch (Exception ex) {
-			LOGGER.error("Error occured in command execution.\n{}",outputStream.toString());
+			LOGGER.error(
+					"Error occured in command execution.\n===========================Command Output===========================\n\n{}\n\n====================================================================",
+					outputStream.toString());
 			throw new RuntimeException(ex);
 		}
 		return (outputStream.toString());
