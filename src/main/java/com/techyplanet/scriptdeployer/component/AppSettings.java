@@ -21,6 +21,9 @@ public class AppSettings {
 	@Value("${app.scripts.run.always.file.pattern}")
 	private String allTimeFilePattern;
 
+	@Value("${app.scripts.file.pattern.conflict}")
+	private String filePatternConflict;
+
 	@Value("${app.script.execute.command}")
 	private String consoleCommand;
 
@@ -76,6 +79,10 @@ public class AppSettings {
 
 	public String getAllTimeFilePattern() {
 		return allTimeFilePattern;
+	}
+
+	public String getFilePatternConflict() {
+		return filePatternConflict;
 	}
 
 	public String getScriptDBVariables() {

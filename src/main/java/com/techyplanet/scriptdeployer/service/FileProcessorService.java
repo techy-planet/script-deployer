@@ -80,12 +80,21 @@ public class FileProcessorService {
 			Long sequence = CommonUtils.getFileSequence(oneTimeFileRegexPattern, fileName);
 
 			Date currentDate = new Date();
-			ScriptHistory sameSequenceEntry = scriptHistoryRepository.findBySequenceAndType(sequence, "SEQ");
+			ScriptHistory sameSequenceEntry = scriptHistoryRepository.findBySequenceAndPattern(sequence,
+					oneTimeFilePattern);
+			ScriptHistory sameFileEntry = scriptHistoryRepository.findByPath(relativePath);
+
 			if (sameSequenceEntry == null) {
+				if (sameFileEntry != null && "error".equalsIgnoreCase(appSettings.getFilePatternConflict())) {
+					throw new RuntimeException(String.format(
+							"File [%s] execution with pattern [%s] conflicts with previous execution of file having pattern [%s]",
+							relativePath, oneTimeFilePattern, sameFileEntry.getPattern()));
+				}
+
 				LOGGER.info("<-- first run --> {}", relativePath);
 				executeScript(oneTimeFilePath);
-				scriptHistoryRepository
-						.save(new ScriptHistory(relativePath, "SEQ", sequence, 1L, checksum, currentDate, currentDate));
+				scriptHistoryRepository.save(new ScriptHistory(relativePath, "SEQ", sequence, 1L, checksum,
+						oneTimeFilePattern, currentDate, currentDate));
 			} else if (!relativePath.equals(sameSequenceEntry.getPath())) {
 				throw new RuntimeException(String.format(
 						"[%s] file was executed in previous runs with same sequence number, [%s] can't use same sequence number.",
@@ -155,10 +164,16 @@ public class FileProcessorService {
 			if (previousEntry == null) {
 				LOGGER.info("<-- first run --> {}", relativePath);
 				executeScript(repeatableFilePath);
-				scriptHistoryRepository
-						.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum, currentDate, currentDate));
+				scriptHistoryRepository.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum,
+						repeatableFilePattern, currentDate, currentDate));
+			} else if ("error".equalsIgnoreCase(appSettings.getFilePatternConflict())
+					&& !repeatableFilePattern.equals(previousEntry.getPattern())) {
+				throw new RuntimeException(String.format(
+						"File [%s] execution with pattern [%s] conflicts with previous execution of file having pattern [%s]",
+						relativePath, repeatableFilePattern, previousEntry.getPattern()));
 			} else if (!checksum.equals(previousEntry.getChecksum())) {
 				previousEntry.setChecksum(checksum);
+				previousEntry.setPattern(repeatableFilePattern);
 				previousEntry.setVersion(previousEntry.getVersion() + 1);
 				previousEntry.setUpdateDate(currentDate);
 				LOGGER.info("<-- re-run --> {}", relativePath);
@@ -217,8 +232,13 @@ public class FileProcessorService {
 			if (previousEntry == null) {
 				LOGGER.info("<-- first run --> {}", relativePath);
 				executeScript(allTimeFilePath);
-				scriptHistoryRepository
-						.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum, currentDate, currentDate));
+				scriptHistoryRepository.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum,
+						allTimeFilePattern, currentDate, currentDate));
+			} else if ("error".equalsIgnoreCase(appSettings.getFilePatternConflict())
+					&& !allTimeFilePattern.equals(previousEntry.getPattern())) {
+				throw new RuntimeException(String.format(
+						"File [%s] execution with pattern [%s] conflicts with previous execution of file having pattern [%s]",
+						relativePath, allTimeFilePattern, previousEntry.getPattern()));
 			} else {
 				LOGGER.info("<-- re-run --> {}", relativePath);
 				executeScript(allTimeFilePath);

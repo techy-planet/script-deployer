@@ -14,6 +14,7 @@ public class ScriptHistory {
 	private Long sequence;
 	private Long version;
 	private String checksum;
+	private String pattern;
 	private Date createDate;
 	private Date updateDate;
 
@@ -21,14 +22,15 @@ public class ScriptHistory {
 		super();
 	}
 
-	public ScriptHistory(String path, String type, Long sequence, Long version, String checksum, Date createDate,
-			Date updateDate) {
+	public ScriptHistory(String path, String type, Long sequence, Long version, String checksum, String pattern,
+			Date createDate, Date updateDate) {
 		super();
 		this.path = path;
 		this.type = type;
 		this.sequence = sequence;
 		this.version = version;
 		this.checksum = checksum;
+		this.pattern = pattern;
 		this.createDate = createDate;
 		this.updateDate = updateDate;
 	}
@@ -73,6 +75,14 @@ public class ScriptHistory {
 		this.checksum = checksum;
 	}
 
+	public String getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
+	}
+
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -92,7 +102,8 @@ public class ScriptHistory {
 	@Override
 	public String toString() {
 		return "ScriptHistory [path=" + path + ", type=" + type + ", sequence=" + sequence + ", version=" + version
-				+ ", checksum=" + checksum + ", createDate=" + createDate + ", updateDate=" + updateDate + "]";
+				+ ", checksum=" + checksum + ", pattern=" + pattern + ", createDate=" + createDate + ", updateDate="
+				+ updateDate + "]";
 	}
 
 }
