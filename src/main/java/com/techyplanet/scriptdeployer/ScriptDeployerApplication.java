@@ -40,6 +40,7 @@ public class ScriptDeployerApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		try {
 			dbSpooler.spoolDB("before_");
+			LOGGER.info("=================================================");
 			LOGGER.info("Execution Started");
 			LOGGER.info("=================================================");
 			variablesValidator.validate();
@@ -47,6 +48,8 @@ public class ScriptDeployerApplication implements CommandLineRunner {
 			fileProcessorService.processOneTimeFiles(scriptsDir);
 			fileProcessorService.processRepeatableFiles(scriptsDir);
 			fileProcessorService.processRunAllTimeFiles(scriptsDir);
+			LOGGER.info("=================================================");
+			LOGGER.info("Execution finished");
 			LOGGER.info("=================================================");
 			dbSpooler.spoolDB("after_");
 			LOGGER.info("Execution completed.");
