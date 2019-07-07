@@ -33,6 +33,9 @@ public class AppSettings {
 	@Value("${app.script.execute.command.output}")
 	private boolean consoleCommandOutputEnabled;
 
+	@Value("${app.script.execute.stopOnfail}")
+	private boolean stopOnScriptFail;
+
 	@Value("${app.script.sequence.file.modified.error}")
 	private String fileModifyError;
 
@@ -87,6 +90,10 @@ public class AppSettings {
 
 	public String getScriptDBVariables() {
 		return scriptDBVariables;
+	}
+
+	public boolean isStopOnScriptFail() {
+		return stopOnScriptFail;
 	}
 
 	public String getLogDir() {

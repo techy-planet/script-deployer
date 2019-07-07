@@ -257,6 +257,7 @@ public class FileProcessorService {
 		String script = srcScript;
 		String consoleCommand = appSettings.getConsoleCommand();
 		String loggingPattern = appSettings.getConsoleCommandLogging();
+		boolean stopOnScriptFail = appSettings.isStopOnScriptFail();
 
 		LOGGER.info("<-- Executing --> {}", loggingPattern.replace("<script>", srcScript));
 
@@ -281,7 +282,7 @@ public class FileProcessorService {
 		if (appSettings.isConsoleCommandOutputEnabled()) {
 			CommandUtils.execute(commandToExecute);
 		} else {
-			CommandUtils.executeAndGetOutput(commandToExecute);
+			CommandUtils.executeAndGetOutput(commandToExecute, stopOnScriptFail);
 		}
 	}
 }

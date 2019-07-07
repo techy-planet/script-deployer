@@ -19,16 +19,18 @@ public class CommandUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommandUtils.class);
 
-	public static final String executeAndGetOutput(String command) {
+	public static final String executeAndGetOutput(String command, boolean stopOnScriptFail) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
 		try {
 			checkOSAndExecute(command, streamHandler);
 		} catch (Exception ex) {
 			LOGGER.error(
-					"Error occured in command execution.\n===========================Command Output===========================\n\n{}\n\n====================================================================",
+					"Error occured in command execution.\n=============================Error Output===========================\n\n{}\n\n====================================================================",
 					outputStream.toString());
-			throw new RuntimeException(ex);
+			if (stopOnScriptFail) {
+				throw new RuntimeException(ex);
+			}
 		}
 		return (outputStream.toString());
 	}
