@@ -74,7 +74,7 @@
 					<descriptors>
 						<descriptor>src/assembly/assembly.xml</descriptor>
 					</descriptors>
-					<finalName>script-deployer-${pom.version}</finalName>
+					<finalName>script-deployer-${project.version}</finalName>
 				</configuration>
 				<executions>
 					<execution>
