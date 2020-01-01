@@ -48,6 +48,9 @@ public class AppSettings {
 	@Value("${app.scripts.deployer.home}/logs")
 	private String logDir;
 
+	@Value("${spring.jpa.hibernate.naming.table.prefix}")
+	private String tableNamePrefix;
+
 	@Value("${app.scripts.db.metadata.spool}")
 	private boolean scriptMetadataSpoolEnabled;
 
@@ -111,4 +114,7 @@ public class AppSettings {
 		return scriptMetadataSpoolEnabled;
 	}
 
+	public String getTableNamePrefix() {
+		return tableNamePrefix;
+	}
 }
