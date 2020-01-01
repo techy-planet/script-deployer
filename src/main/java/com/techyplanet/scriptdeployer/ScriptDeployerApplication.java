@@ -45,9 +45,10 @@ public class ScriptDeployerApplication implements CommandLineRunner {
 			LOGGER.info("=================================================");
 			variablesValidator.validate();
 			File scriptsDir = Paths.get(appSettings.getScriptsLocation()).toFile();
+			fileProcessorService.processPreRunFiles(scriptsDir);
 			fileProcessorService.processOneTimeFiles(scriptsDir);
 			fileProcessorService.processRepeatableFiles(scriptsDir);
-			fileProcessorService.processRunAllTimeFiles(scriptsDir);
+			fileProcessorService.processPostRunFiles(scriptsDir);
 			LOGGER.info("=================================================");
 			LOGGER.info("Execution finished");
 			LOGGER.info("=================================================");
@@ -59,6 +60,9 @@ public class ScriptDeployerApplication implements CommandLineRunner {
 			} else {
 				LOGGER.error(ex.getMessage());
 			}
+			LOGGER.error("=================================================");
+			LOGGER.error("<<< Execution failed ! >>>");
+			LOGGER.error("=================================================");
 			System.exit(1000);
 		}
 	}

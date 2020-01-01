@@ -52,11 +52,11 @@ public class FileProcessorService {
 
 		String[] oneTimeFilePatterns = oneTimeFilePatternProp.split(",");
 		for (String oneTimeFilePattern : oneTimeFilePatterns) {
-			processOneTimeFIle(scriptsDir, oneTimeFilePattern);
+			processOneTimeFile(scriptsDir, oneTimeFilePattern);
 		}
 	}
 
-	private void processOneTimeFIle(File scriptsDir, String oneTimeFilePattern) {
+	private void processOneTimeFile(File scriptsDir, String oneTimeFilePattern) {
 		if (!oneTimeFilePattern.contains("<seq_num>")) {
 			throw new RuntimeException(String
 					.format("'<seq_num>' must be defined as part of one time file pattern [%s]", oneTimeFilePattern));
@@ -176,7 +176,7 @@ public class FileProcessorService {
 				previousEntry.setPattern(repeatableFilePattern);
 				previousEntry.setVersion(previousEntry.getVersion() + 1);
 				previousEntry.setUpdateDate(currentDate);
-				LOGGER.info("<-- re-run --> {}", relativePath);
+				LOGGER.info("<-- run --> {}", relativePath);
 				executeScript(repeatableFilePath);
 				scriptHistoryRepository.save(previousEntry);
 			} else {
@@ -186,19 +186,33 @@ public class FileProcessorService {
 		}
 	}
 
-	public void processRunAllTimeFiles(File scriptsDir) {
-
-		LOGGER.info("=========== checking scripts for each run =======");
-		String allTimeFilePatternProp = appSettings.getAllTimeFilePattern();
-		if (StringUtils.isBlank(allTimeFilePatternProp)) {
-			LOGGER.info(
-					"<-- Skipping --> No pattern defined for everytime scripts [app.scripts.run.always.file.pattern], hence skipping everytime scripts deployment.");
+	public void processPreRunFiles(File scriptsDir) {
+		LOGGER.info("=========== checking pre scripts for each run =======");
+		String preRunFilePattern = appSettings.getPreRunFilePattern();
+		if (StringUtils.isBlank(preRunFilePattern)) {
+			LOGGER.info("<-- Skipping --> No pattern defined for scripts [app.scripts.pre.run.file.pattern]");
 			return;
 		}
 
-		String[] allTimeFilePatterns = allTimeFilePatternProp.split(",");
-		for (String allTimeFilePattern : allTimeFilePatterns) {
-			processRunAllTimeFile(scriptsDir, allTimeFilePattern);
+		String[] preRunFilePatterns = preRunFilePattern.split(",");
+		for (String preRunFilePatternEntry : preRunFilePatterns) {
+			processRunAllTimeFile(scriptsDir, preRunFilePatternEntry);
+		}
+
+	}
+
+	public void processPostRunFiles(File scriptsDir) {
+
+		LOGGER.info("=========== checking post scripts for each run =======");
+		String postRunFilePattern = appSettings.getPostRunFilePattern();
+		if (StringUtils.isBlank(postRunFilePattern)) {
+			LOGGER.info("<-- Skipping --> No pattern defined for scripts [app.scripts.post.run.file.pattern]");
+			return;
+		}
+
+		String[] postRunFilePatterns = postRunFilePattern.split(",");
+		for (String postRunFilePatternEntry : postRunFilePatterns) {
+			processRunAllTimeFile(scriptsDir, postRunFilePatternEntry);
 		}
 	}
 
@@ -240,7 +254,7 @@ public class FileProcessorService {
 						"File [%s] execution with pattern [%s] conflicts with previous execution of file having pattern [%s]",
 						relativePath, allTimeFilePattern, previousEntry.getPattern()));
 			} else {
-				LOGGER.info("<-- re-run --> {}", relativePath);
+				LOGGER.info("<-- run --> {}", relativePath);
 				executeScript(allTimeFilePath);
 				if (!checksum.equals(previousEntry.getChecksum())) {
 					previousEntry.setChecksum(checksum);

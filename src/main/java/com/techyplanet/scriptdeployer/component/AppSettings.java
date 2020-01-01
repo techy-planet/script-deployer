@@ -18,8 +18,11 @@ public class AppSettings {
 	@Value("${app.scripts.repeatable.file.pattern}")
 	private String repeatableFilePattern;
 
-	@Value("${app.scripts.run.always.file.pattern}")
-	private String allTimeFilePattern;
+	@Value("${app.scripts.pre.run.file.pattern}")
+	private String preRunFilePattern;
+
+	@Value("${app.scripts.post.run.file.pattern}")
+	private String postRunFilePattern;
 
 	@Value("${app.scripts.file.pattern.conflict}")
 	private String filePatternConflict;
@@ -80,8 +83,12 @@ public class AppSettings {
 		return fileModifyError;
 	}
 
-	public String getAllTimeFilePattern() {
-		return allTimeFilePattern;
+	public String getPreRunFilePattern() {
+		return preRunFilePattern;
+	}
+
+	public String getPostRunFilePattern() {
+		return postRunFilePattern;
 	}
 
 	public String getFilePatternConflict() {
