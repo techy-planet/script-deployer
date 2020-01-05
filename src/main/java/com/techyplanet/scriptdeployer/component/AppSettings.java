@@ -42,11 +42,14 @@ public class AppSettings {
 	@Value("${app.script.execute.stopOnfail}")
 	private boolean stopOnScriptFail;
 
+	@Value("${app.scripts.execute.validate.fileSize}")
+	private boolean validateScriptFileSize;
+
 	@Value("${app.script.sequence.file.modified.error}")
 	private String fileModifyError;
 
 	@Value("${app.script.template.variables}")
-	private String scriptDBVariables;
+	private String scriptVariables;
 
 	@Value("${app.scripts.deployer.home}/logs")
 	private String logDir;
@@ -77,22 +80,6 @@ public class AppSettings {
 		return repeatableFilePattern;
 	}
 
-	public String getConsoleCommand() {
-		return consoleCommand;
-	}
-
-	public String getConsoleCommandLogging() {
-		return consoleCommandLogging;
-	}
-
-	public boolean isConsoleCommandOutputEnabled() {
-		return consoleCommandOutputEnabled;
-	}
-
-	public String getFileModifyError() {
-		return fileModifyError;
-	}
-
 	public String getPreRunFilePattern() {
 		return preRunFilePattern;
 	}
@@ -105,23 +92,44 @@ public class AppSettings {
 		return filePatternConflict;
 	}
 
-	public String getScriptDBVariables() {
-		return scriptDBVariables;
+	public String getConsoleCommand() {
+		return consoleCommand;
+	}
+
+	public String getConsoleCommandLogging() {
+		return consoleCommandLogging;
+	}
+
+	public boolean isConsoleCommandOutputEnabled() {
+		return consoleCommandOutputEnabled;
 	}
 
 	public boolean isStopOnScriptFail() {
 		return stopOnScriptFail;
 	}
 
+	public boolean isValidateScriptFileSize() {
+		return validateScriptFileSize;
+	}
+
+	public String getFileModifyError() {
+		return fileModifyError;
+	}
+
+	public String getScriptVariables() {
+		return scriptVariables;
+	}
+
 	public String getLogDir() {
 		return logDir;
+	}
+
+	public String getTableNamePrefix() {
+		return tableNamePrefix;
 	}
 
 	public boolean isScriptMetadataSpoolEnabled() {
 		return scriptMetadataSpoolEnabled;
 	}
 
-	public String getTableNamePrefix() {
-		return tableNamePrefix;
-	}
 }

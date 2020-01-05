@@ -35,7 +35,7 @@ public class FileProcessorService {
 	private AppSettings appSettings;
 
 	@Autowired
-	private StringSubstitutor dbVariablesSubstitutor;
+	private StringSubstitutor scriptVariablesSubstitutor;
 
 	@Autowired
 	private ScriptHistoryRepository scriptHistoryRepository;
@@ -267,30 +267,42 @@ public class FileProcessorService {
 		}
 	}
 
-	private void executeScript(String srcScript) {
-		String script = srcScript;
+	private void executeScript(final String srcScript) {
+		String srcScriptPath = srcScript;
 		String consoleCommand = appSettings.getConsoleCommand();
 		String loggingPattern = appSettings.getConsoleCommandLogging();
 		boolean stopOnScriptFail = appSettings.isStopOnScriptFail();
 
-		LOGGER.info("<-- Executing --> {}", loggingPattern.replace("<script>", srcScript));
+		LOGGER.info("<-- Executing --> {}", loggingPattern.replace("<script>", srcScriptPath));
 
-		String scriptDBVariables = appSettings.getScriptDBVariables();
+		String scriptVariables = appSettings.getScriptVariables();
 
-		if (StringUtils.isNotBlank(scriptDBVariables)) {
+		File srcScriptFile = new File(srcScriptPath);
+		File scriptToBeExecuted = srcScriptFile;
+
+		if (StringUtils.isNotBlank(scriptVariables)) {
+
 			String logDir = appSettings.getLogDir();
-			script = logDir + "/dbTmpFile.txt";
-			try (PrintWriter pw = new PrintWriter(script);
-					Stream<String> lines = Files.lines(new File(srcScript).toPath(), StandardCharsets.UTF_8)) {
+			srcScriptPath = logDir + "/scriptTmpFile.txt";
+			scriptToBeExecuted = new File(srcScriptPath);
+
+			try (PrintWriter pw = new PrintWriter(srcScriptPath);
+					Stream<String> lines = Files.lines(srcScriptFile.toPath(), StandardCharsets.UTF_8)) {
 				lines.forEach(line -> {
-					pw.println(dbVariablesSubstitutor.replace(line));
+					pw.println(scriptVariablesSubstitutor.replace(line));
 				});
 			} catch (Exception ex) {
-				throw new RuntimeException("DB script place holder replacement failed.", ex);
+				throw new RuntimeException("Script place holder replacement failed.", ex);
 			}
+
+			if (appSettings.isValidateScriptFileSize() && scriptToBeExecuted.length() == 0) {
+				throw new RuntimeException("Script is empty after variable replacement --> " + srcScriptFile.toPath());
+			}
+		} else if (appSettings.isValidateScriptFileSize() && scriptToBeExecuted.length() == 0) {
+			throw new RuntimeException("Script is empty --> " + srcScriptFile.toPath());
 		}
 
-		String commandToExecute = consoleCommand.replace("<script>", new File(script).getPath());
+		String commandToExecute = consoleCommand.replace("<script>", scriptToBeExecuted.getPath());
 
 		LOGGER.debug("final command to execute --> [{}]", commandToExecute);
 		if (appSettings.isConsoleCommandOutputEnabled()) {

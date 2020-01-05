@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 import com.techyplanet.scriptdeployer.component.AppSettings;
 
 @Configuration
-public class DBScriptStrSubstitutor {
+public class ScriptStrSubstitutor {
 
 	@Autowired
 	private Environment env;
@@ -21,13 +21,13 @@ public class DBScriptStrSubstitutor {
 	private AppSettings appSettings;
 
 	@Bean
-	public StringSubstitutor dbVariablesSubstitutor() {
-		String[] variableNames = appSettings.getScriptDBVariables().split(",");
-		Map<String, String> dbScriptVariables = new HashMap<>(variableNames.length);
+	public StringSubstitutor variablesSubstitutor() {
+		String[] variableNames = appSettings.getScriptVariables().split(",");
+		Map<String, String> scriptVariables = new HashMap<>(variableNames.length);
 		for (String variableName : variableNames) {
-			dbScriptVariables.put(variableName.trim(), env.getProperty(variableName));
+			scriptVariables.put(variableName.trim(), env.getProperty(variableName));
 		}
-		return new StringSubstitutor(dbScriptVariables);
+		return new StringSubstitutor(scriptVariables);
 	}
 
 }
