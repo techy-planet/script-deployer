@@ -50,7 +50,7 @@ public class FileProcessorService {
 			return;
 		}
 
-		String[] oneTimeFilePatterns = oneTimeFilePatternProp.split(",");
+		String[] oneTimeFilePatterns = oneTimeFilePatternProp.split(appSettings.getFilePatternDelimiter());
 		for (String oneTimeFilePattern : oneTimeFilePatterns) {
 			processOneTimeFile(scriptsDir, oneTimeFilePattern);
 		}
@@ -128,7 +128,7 @@ public class FileProcessorService {
 			return;
 		}
 
-		String[] repeatableFilePatterns = repeatableFilePatternProp.split(",");
+		String[] repeatableFilePatterns = repeatableFilePatternProp.split(appSettings.getFilePatternDelimiter());
 		for (String repeatableFilePattern : repeatableFilePatterns) {
 			processRepeatableFile(scriptsDir, repeatableFilePattern);
 		}
@@ -194,7 +194,7 @@ public class FileProcessorService {
 			return;
 		}
 
-		String[] preRunFilePatterns = preRunFilePattern.split(",");
+		String[] preRunFilePatterns = preRunFilePattern.split(appSettings.getFilePatternDelimiter());
 		for (String preRunFilePatternEntry : preRunFilePatterns) {
 			processRunAllTimeFile(scriptsDir, preRunFilePatternEntry);
 		}
@@ -210,7 +210,7 @@ public class FileProcessorService {
 			return;
 		}
 
-		String[] postRunFilePatterns = postRunFilePattern.split(",");
+		String[] postRunFilePatterns = postRunFilePattern.split(appSettings.getFilePatternDelimiter());
 		for (String postRunFilePatternEntry : postRunFilePatterns) {
 			processRunAllTimeFile(scriptsDir, postRunFilePatternEntry);
 		}

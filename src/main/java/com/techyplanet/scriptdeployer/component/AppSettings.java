@@ -12,6 +12,9 @@ public class AppSettings {
 	@Value("${app.scripts.location}")
 	private String scriptsLocation;
 
+	@Value("${app.scripts.file.pattern.delimiter}")
+	private String filePatternDelimiter;
+
 	@Value("${app.scripts.oneTime.file.pattern}")
 	private String oneTimeFilePattern;
 
@@ -60,6 +63,10 @@ public class AppSettings {
 
 	public String getScriptsLocation() {
 		return scriptsLocation;
+	}
+
+	public String getFilePatternDelimiter() {
+		return filePatternDelimiter;
 	}
 
 	public String getOneTimeFilePattern() {
