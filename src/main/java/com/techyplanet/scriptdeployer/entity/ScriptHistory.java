@@ -89,10 +89,6 @@ public class ScriptHistory {
 		return deploymentReqNo;
 	}
 
-	public void setDeploymentReqNo(String deploymentReqNo) {
-		this.deploymentReqNo = deploymentReqNo;
-	}
-
 	public FileId getFileId() {
 		return fileId;
 	}
