@@ -48,6 +48,9 @@ public class AppSettings {
 	@Value("${app.script.sequence.file.modified.error}")
 	private String fileModifyError;
 
+	@Value("${app.log.skip.script.enabled}")
+	private boolean logSkipScriptEnabled;
+
 	@Value("${app.script.template.variables}")
 	private String scriptVariables;
 
@@ -130,6 +133,10 @@ public class AppSettings {
 
 	public boolean isScriptMetadataSpoolEnabled() {
 		return scriptMetadataSpoolEnabled;
+	}
+
+	public boolean isLogSkipScriptEnabled() {
+		return logSkipScriptEnabled;
 	}
 
 }

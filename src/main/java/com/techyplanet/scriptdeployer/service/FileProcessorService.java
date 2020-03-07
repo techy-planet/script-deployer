@@ -113,7 +113,9 @@ public class FileProcessorService {
 							relativePath));
 				}
 			} else {
-				LOGGER.info("<-- Skipping  --> {}", relativePath);
+				if (appSettings.isLogSkipScriptEnabled()) {
+					LOGGER.info("\t<-- Skipping  --> {}", relativePath);
+				}
 			}
 
 		}
@@ -181,9 +183,10 @@ public class FileProcessorService {
 				executeScript(repeatableFilePath);
 				scriptHistoryRepository.save(newEntry);
 			} else {
-				LOGGER.info("<-- Skipping  --> {}", relativePath);
+				if (appSettings.isLogSkipScriptEnabled()) {
+					LOGGER.info("\t<-- Skipping  --> {}", relativePath);
+				}
 			}
-
 		}
 	}
 
@@ -274,7 +277,7 @@ public class FileProcessorService {
 		String loggingPattern = appSettings.getConsoleCommandLogging();
 		boolean stopOnScriptFail = appSettings.isStopOnScriptFail();
 
-		LOGGER.info("<-- Executing --> {}", loggingPattern.replace("<script>", srcScriptPath));
+		LOGGER.info("\t<-- Executing --> {}", loggingPattern.replace("<script>", srcScriptPath));
 
 		String scriptVariables = appSettings.getScriptVariables();
 
