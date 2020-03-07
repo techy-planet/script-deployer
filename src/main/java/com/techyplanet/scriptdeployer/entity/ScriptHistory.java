@@ -18,13 +18,14 @@ public class ScriptHistory {
 	private String checksum;
 	private String pattern;
 	private Date createDate;
+	private String deploymentReqNo;
 
 	public ScriptHistory() {
 		super();
 	}
 
 	public ScriptHistory(String path, String type, Long sequence, Long version, String checksum, String pattern,
-			Date createDate, Date updateDate) {
+			Date createDate, Date updateDate, String deploymentReqNo) {
 		super();
 		this.fileId = new FileId(path, updateDate);
 		this.type = type;
@@ -33,6 +34,7 @@ public class ScriptHistory {
 		this.checksum = checksum;
 		this.pattern = pattern;
 		this.createDate = createDate;
+		this.deploymentReqNo = deploymentReqNo;
 	}
 
 	public String getType() {
@@ -81,6 +83,14 @@ public class ScriptHistory {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	public String getDeploymentReqNo() {
+		return deploymentReqNo;
+	}
+
+	public void setDeploymentReqNo(String deploymentReqNo) {
+		this.deploymentReqNo = deploymentReqNo;
 	}
 
 	public FileId getFileId() {

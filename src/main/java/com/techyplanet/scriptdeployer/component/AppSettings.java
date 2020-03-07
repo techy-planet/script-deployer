@@ -33,6 +33,9 @@ public class AppSettings {
 	@Value("${app.script.execute.command}")
 	private String consoleCommand;
 
+	@Value("${app.script.execute.reqNumber}")
+	private String reqNumber;
+
 	@Value("${app.script.execute.command.log}")
 	private String consoleCommandLogging;
 
@@ -137,6 +140,10 @@ public class AppSettings {
 
 	public boolean isLogSkipScriptEnabled() {
 		return logSkipScriptEnabled;
+	}
+
+	public String getReqNumber() {
+		return reqNumber;
 	}
 
 }
