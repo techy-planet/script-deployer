@@ -1,22 +1,23 @@
 package com.techyplanet.scriptdeployer.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 
 @Entity(name = "Schema_History")
 public class ScriptHistory {
 
-	@Id
-	private String path;
+	@EmbeddedId
+	private FileId fileId;
 	private String type;
 	private Long sequence;
 	private Long version;
 	private String checksum;
 	private String pattern;
 	private Date createDate;
-	private Date updateDate;
 
 	public ScriptHistory() {
 		super();
@@ -25,22 +26,13 @@ public class ScriptHistory {
 	public ScriptHistory(String path, String type, Long sequence, Long version, String checksum, String pattern,
 			Date createDate, Date updateDate) {
 		super();
-		this.path = path;
+		this.fileId = new FileId(path, updateDate);
 		this.type = type;
 		this.sequence = sequence;
 		this.version = version;
 		this.checksum = checksum;
 		this.pattern = pattern;
 		this.createDate = createDate;
-		this.updateDate = updateDate;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
 	}
 
 	public String getType() {
@@ -91,19 +83,41 @@ public class ScriptHistory {
 		this.createDate = createDate;
 	}
 
-	public Date getUpdateDate() {
-		return updateDate;
-	}
-
-	public void setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
+	public FileId getFileId() {
+		return fileId;
 	}
 
 	@Override
 	public String toString() {
-		return "ScriptHistory [path=" + path + ", type=" + type + ", sequence=" + sequence + ", version=" + version
-				+ ", checksum=" + checksum + ", pattern=" + pattern + ", createDate=" + createDate + ", updateDate="
-				+ updateDate + "]";
+		return "ScriptHistory [path=" + getFileId().getPath() + ", type=" + type + ", sequence=" + sequence
+				+ ", version=" + version + ", checksum=" + checksum + ", pattern=" + pattern + ", createDate="
+				+ createDate + ", updateDate=" + getFileId().getUpdateDate() + "]";
 	}
 
+	@Embeddable
+	public static class FileId implements Serializable {
+
+		private static final long serialVersionUID = -7121364495848282028L;
+		private String path;
+		private Date updateDate;
+
+		public FileId() {
+			super();
+		}
+
+		public FileId(String path, Date updateDate) {
+			super();
+			this.path = path;
+			this.updateDate = updateDate;
+		}
+
+		public String getPath() {
+			return path;
+		}
+
+		public Date getUpdateDate() {
+			return updateDate;
+		}
+
+	}
 }

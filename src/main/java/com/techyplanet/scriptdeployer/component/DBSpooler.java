@@ -38,8 +38,8 @@ public class DBSpooler {
 		try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
 			pw.println("path,type,sequence,version,checksum,create date,update date");
 			for (ScriptHistory r : records) {
-				pw.println(String.format("%s,%s,%d,%d,%s,%s,%s", r.getPath(), r.getType(), r.getSequence(),
-						r.getVersion(), r.getChecksum(), r.getCreateDate(), r.getUpdateDate()));
+				pw.println(String.format("%s,%s,%d,%d,%s,%s,%s", r.getFileId().getPath(), r.getType(), r.getSequence(),
+						r.getVersion(), r.getChecksum(), r.getCreateDate(), r.getFileId().getUpdateDate()));
 			}
 		} catch (FileNotFoundException ex) {
 			LOGGER.error("Failed to write DB Dump in csv file.");
