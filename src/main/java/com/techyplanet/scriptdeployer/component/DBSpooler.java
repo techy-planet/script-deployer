@@ -36,10 +36,11 @@ public class DBSpooler {
 		Iterable<ScriptHistory> records = scriptHistoryRepository.findAll();
 		File csvOutputFile = new File(spoolFileName);
 		try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
-			pw.println("path,type,sequence,version,checksum,create date,update date");
+			pw.println("path,type,sequence,version,checksum,create date,update date,deployment request no");
 			for (ScriptHistory r : records) {
-				pw.println(String.format("%s,%s,%d,%d,%s,%s,%s", r.getFileId().getPath(), r.getType(), r.getSequence(),
-						r.getVersion(), r.getChecksum(), r.getCreateDate(), r.getFileId().getUpdateDate()));
+				pw.println(String.format("%s,%s,%d,%d,%s,%s,%s,%s", r.getFileId().getPath(), r.getType(),
+						r.getSequence(), r.getVersion(), r.getChecksum(), r.getCreateDate(),
+						r.getFileId().getUpdateDate(), r.getDeploymentReqNo()));
 			}
 		} catch (FileNotFoundException ex) {
 			LOGGER.error("Failed to write DB Dump in csv file.");
