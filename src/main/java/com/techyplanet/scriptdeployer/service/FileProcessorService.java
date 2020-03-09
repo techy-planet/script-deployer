@@ -91,7 +91,7 @@ public class FileProcessorService {
 							relativePath, oneTimeFilePattern, sameFileEntry.getPattern()));
 				}
 
-				LOGGER.info("<-- first run --> {}", relativePath);
+				LOGGER.info("\t<-- first run --> {}", relativePath);
 				executeScript(oneTimeFilePath);
 				scriptHistoryRepository.save(new ScriptHistory(relativePath, "SEQ", sequence, 1L, checksum,
 						oneTimeFilePattern, currentDate, currentDate, appSettings.getReqNumber()));
@@ -166,7 +166,7 @@ public class FileProcessorService {
 			ScriptHistory previousEntry = scriptHistoryRepository
 					.findFirstByFileIdPathOrderByFileIdUpdateDateDesc(relativePath);
 			if (previousEntry == null) {
-				LOGGER.info("<-- first run --> {}", relativePath);
+				LOGGER.info("\t<-- first run --> {}", relativePath);
 				executeScript(repeatableFilePath);
 				scriptHistoryRepository.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum,
 						repeatableFilePattern, currentDate, currentDate, appSettings.getReqNumber()));
@@ -248,7 +248,7 @@ public class FileProcessorService {
 			Date currentDate = new Date();
 			ScriptHistory previousEntry = scriptHistoryRepository.findByFileIdPath(relativePath);
 			if (previousEntry == null) {
-				LOGGER.info("<-- first run --> {}", relativePath);
+				LOGGER.info("\t<-- first run --> {}", relativePath);
 				executeScript(allTimeFilePath);
 				scriptHistoryRepository.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum,
 						allTimeFilePattern, currentDate, currentDate, appSettings.getReqNumber()));
