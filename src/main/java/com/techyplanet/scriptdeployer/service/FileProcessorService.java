@@ -260,13 +260,14 @@ public class FileProcessorService {
 			} else {
 				LOGGER.info("<-- run --> {}", relativePath);
 				executeScript(allTimeFilePath);
+				long newVersion = previousEntry.getVersion();
 				if (!checksum.equals(previousEntry.getChecksum())) {
-					ScriptHistory newEntry = new ScriptHistory(previousEntry.getFileId().getPath(),
-							previousEntry.getType(), previousEntry.getSequence(), previousEntry.getVersion() + 1,
-							checksum, previousEntry.getPattern(), previousEntry.getCreateDate(), currentDate,
-							appSettings.getReqNumber());
-					scriptHistoryRepository.save(newEntry);
+					newVersion++;
 				}
+				ScriptHistory newEntry = new ScriptHistory(previousEntry.getFileId().getPath(), previousEntry.getType(),
+						previousEntry.getSequence(), newVersion, checksum, previousEntry.getPattern(),
+						previousEntry.getCreateDate(), currentDate, appSettings.getReqNumber());
+				scriptHistoryRepository.save(newEntry);
 			}
 
 		}
