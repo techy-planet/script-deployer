@@ -82,7 +82,8 @@ public class FileProcessorService {
 			Date currentDate = new Date();
 			ScriptHistory sameSequenceEntry = scriptHistoryRepository.findBySequenceAndPattern(sequence,
 					oneTimeFilePattern);
-			ScriptHistory sameFileEntry = scriptHistoryRepository.findByFileIdPath(relativePath);
+			ScriptHistory sameFileEntry = scriptHistoryRepository
+					.findFirstByFileIdPathOrderByFileIdUpdateDateDesc(relativePath);
 
 			if (sameSequenceEntry == null) {
 				if (sameFileEntry != null && "error".equalsIgnoreCase(appSettings.getFilePatternConflict())) {
@@ -246,7 +247,8 @@ public class FileProcessorService {
 			Long sequence = CommonUtils.getFileSequence(allTimeFileRegexPattern, fileName, seqNumApplicable);
 
 			Date currentDate = new Date();
-			ScriptHistory previousEntry = scriptHistoryRepository.findByFileIdPath(relativePath);
+			ScriptHistory previousEntry = scriptHistoryRepository
+					.findFirstByFileIdPathOrderByFileIdUpdateDateDesc(relativePath);
 			if (previousEntry == null) {
 				LOGGER.info("\t<-- first run --> {}", relativePath);
 				executeScript(allTimeFilePath);

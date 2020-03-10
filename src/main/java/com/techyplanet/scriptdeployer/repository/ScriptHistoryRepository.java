@@ -8,7 +8,5 @@ public interface ScriptHistoryRepository extends CrudRepository<ScriptHistory, L
 
 	ScriptHistory findBySequenceAndPattern(Long sequence, String pattern);
 
-	ScriptHistory findByFileIdPath(String path);
-
 	ScriptHistory findFirstByFileIdPathOrderByFileIdUpdateDateDesc(String path);
 }
