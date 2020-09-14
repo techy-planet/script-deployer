@@ -93,9 +93,10 @@ public class FileProcessorService {
 				}
 
 				LOGGER.info("\t<-- first run --> {}", relativePath);
-				executeScript(oneTimeFilePath);
-				scriptHistoryRepository.save(new ScriptHistory(relativePath, "SEQ", sequence, 1L, checksum,
-						oneTimeFilePattern, currentDate, currentDate, appSettings.getReqNumber()));
+				if (executeScript(oneTimeFilePath) == true) {
+					scriptHistoryRepository.save(new ScriptHistory(relativePath, "SEQ", sequence, 1L, checksum,
+							oneTimeFilePattern, currentDate, currentDate, appSettings.getReqNumber()));
+				}
 			} else if (!relativePath.equals(sameSequenceEntry.getFileId().getPath())) {
 				throw new RuntimeException(String.format(
 						"[%s] file was executed in previous runs with same sequence number, [%s] can't use same sequence number.",
@@ -168,9 +169,10 @@ public class FileProcessorService {
 					.findFirstByFileIdPathOrderByFileIdUpdateDateDesc(relativePath);
 			if (previousEntry == null) {
 				LOGGER.info("\t<-- first run --> {}", relativePath);
-				executeScript(repeatableFilePath);
-				scriptHistoryRepository.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum,
-						repeatableFilePattern, currentDate, currentDate, appSettings.getReqNumber()));
+				if (executeScript(repeatableFilePath) == true) {
+					scriptHistoryRepository.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum,
+							repeatableFilePattern, currentDate, currentDate, appSettings.getReqNumber()));
+				}
 			} else if ("error".equalsIgnoreCase(appSettings.getFilePatternConflict())
 					&& !repeatableFilePattern.equals(previousEntry.getPattern())) {
 				throw new RuntimeException(String.format(
@@ -181,8 +183,9 @@ public class FileProcessorService {
 						previousEntry.getSequence(), previousEntry.getVersion() + 1, checksum, repeatableFilePattern,
 						previousEntry.getCreateDate(), currentDate, appSettings.getReqNumber());
 				LOGGER.info("<-- run --> {}", relativePath);
-				executeScript(repeatableFilePath);
-				scriptHistoryRepository.save(newEntry);
+				if (executeScript(repeatableFilePath) == true) {
+					scriptHistoryRepository.save(newEntry);
+				}
 			} else {
 				if (appSettings.isLogSkipScriptEnabled()) {
 					LOGGER.info("\t<-- Skipping  --> {}", relativePath);
@@ -251,9 +254,10 @@ public class FileProcessorService {
 					.findFirstByFileIdPathOrderByFileIdUpdateDateDesc(relativePath);
 			if (previousEntry == null) {
 				LOGGER.info("\t<-- first run --> {}", relativePath);
-				executeScript(allTimeFilePath);
-				scriptHistoryRepository.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum,
-						allTimeFilePattern, currentDate, currentDate, appSettings.getReqNumber()));
+				if (executeScript(allTimeFilePath) == true) {
+					scriptHistoryRepository.save(new ScriptHistory(relativePath, "REP", sequence, 1L, checksum,
+							allTimeFilePattern, currentDate, currentDate, appSettings.getReqNumber()));
+				}
 			} else if ("error".equalsIgnoreCase(appSettings.getFilePatternConflict())
 					&& !allTimeFilePattern.equals(previousEntry.getPattern())) {
 				throw new RuntimeException(String.format(
@@ -261,21 +265,21 @@ public class FileProcessorService {
 						relativePath, allTimeFilePattern, previousEntry.getPattern()));
 			} else {
 				LOGGER.info("<-- run --> {}", relativePath);
-				executeScript(allTimeFilePath);
 				long newVersion = previousEntry.getVersion();
 				if (!checksum.equals(previousEntry.getChecksum())) {
 					newVersion++;
 				}
-				ScriptHistory newEntry = new ScriptHistory(previousEntry.getFileId().getPath(), previousEntry.getType(),
-						previousEntry.getSequence(), newVersion, checksum, previousEntry.getPattern(),
-						previousEntry.getCreateDate(), currentDate, appSettings.getReqNumber());
-				scriptHistoryRepository.save(newEntry);
+				if (executeScript(allTimeFilePath) == true) {
+					ScriptHistory newEntry = new ScriptHistory(previousEntry.getFileId().getPath(), previousEntry.getType(),
+							previousEntry.getSequence(), newVersion, checksum, previousEntry.getPattern(),
+							previousEntry.getCreateDate(), currentDate, appSettings.getReqNumber());
+					scriptHistoryRepository.save(newEntry);
+				}
 			}
-
 		}
 	}
 
-	private void executeScript(final String srcScript) {
+	private boolean executeScript(final String srcScript) {
 		String srcScriptPath = srcScript;
 		String consoleCommand = appSettings.getConsoleCommand();
 		String loggingPattern = appSettings.getConsoleCommandLogging();
@@ -314,9 +318,9 @@ public class FileProcessorService {
 
 		LOGGER.debug("final command to execute --> [{}]", commandToExecute);
 		if (appSettings.isConsoleCommandOutputEnabled()) {
-			CommandUtils.execute(commandToExecute);
+			return CommandUtils.execute(commandToExecute, stopOnScriptFail);
 		} else {
-			CommandUtils.executeAndGetOutput(commandToExecute, stopOnScriptFail);
+			return CommandUtils.executeAndPrintOnFail(commandToExecute, stopOnScriptFail);
 		}
 	}
 }

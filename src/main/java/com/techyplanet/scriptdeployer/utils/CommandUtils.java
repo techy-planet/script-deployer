@@ -19,11 +19,12 @@ public class CommandUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommandUtils.class);
 
-	public static final String executeAndGetOutput(String command, boolean stopOnScriptFail) {
+	public static final boolean executeAndPrintOnFail(String command, boolean stopOnScriptFail) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		PumpStreamHandler streamHandler = new PumpStreamHandler(outputStream);
 		try {
 			checkOSAndExecute(command, streamHandler);
+			return true;
 		} catch (Exception ex) {
 			LOGGER.error(
 					"Error occured in command execution.\n=============================Error Output===========================\n\n{}\n\n====================================================================",
@@ -31,12 +32,21 @@ public class CommandUtils {
 			if (stopOnScriptFail) {
 				throw new RuntimeException(ex);
 			}
+			return false;
 		}
-		return (outputStream.toString());
 	}
 
-	public static final int execute(String command) {
-		return checkOSAndExecute(command, dynmaicLogStreamHandler());
+	public static final boolean execute(String command, boolean stopOnScriptFail) {
+		try {
+			checkOSAndExecute(command, dynmaicLogStreamHandler());
+			return true;
+		} catch (Exception ex) {
+			LOGGER.error("Error occured in command execution.");
+			if (stopOnScriptFail) {
+				throw new RuntimeException(ex);
+			}
+			return false;
+		}
 	}
 
 	private static final int checkOSAndExecute(String command, ExecuteStreamHandler executeStreamHandler) {
